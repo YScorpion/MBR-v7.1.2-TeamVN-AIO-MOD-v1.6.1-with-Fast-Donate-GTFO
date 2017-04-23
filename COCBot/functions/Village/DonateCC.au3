@@ -93,48 +93,50 @@ Func DonateCC($Check = False)
 	If _CheckPixel($aChatTab, $g_bCapturePixel) = False Then ClickP($aOpenChat, 1, 0, "#0168") ; Clicks chat tab
 	If _Sleep($DELAYDONATECC4) Then Return
 
-	Local $icount = 0
-	While 1
-		;If Clan tab is selected.
-		If _ColorCheck(_GetPixelColor(189, 24, True), Hex(0x706C50, 6), 20) = True Then ; color med gray
-			;If _Sleep(200) Then Return ;small delay to allow tab to completely open
-			;Clan tab already Selected no click needed
-			;ClickP($aClanTab, 1, 0, "#0169") ; clicking clan tab
-			ExitLoop
-		EndIf
-		;If Global tab is selected.
-		If _ColorCheck(_GetPixelColor(189, 24, True), Hex(0x383828, 6), 20) = True Then ; Darker gray
-			If _Sleep($DELAYDONATECC1) Then Return ;small delay to allow tab to completely open
+;	Local $icount = 0
+;	While 1
+;		;If Clan tab is selected.
+;		If _ColorCheck(_GetPixelColor(189, 24, True), Hex(0x706C50, 6), 20) = True Then ; color med gray
+;			;If _Sleep(200) Then Return ;small delay to allow tab to completely open
+;			;Clan tab already Selected no click needed
+;			;ClickP($aClanTab, 1, 0, "#0169") ; clicking clan tab
+;			ExitLoop
+;		EndIf
+;		;If Global tab is selected.
+;		If _ColorCheck(_GetPixelColor(189, 24, True), Hex(0x383828, 6), 20) = True Then ; Darker gray
+;			If _Sleep($DELAYDONATECC1) Then Return ;small delay to allow tab to completely open
 			ClickP($aClanTab, 1, 0, "#0169") ; clicking clan tab
-			ExitLoop
-		EndIf
-		;counter for time approx 3 sec max allowed for tab to open
-		$icount += 1
-		If $icount >= 15 Then ; allows for up to a sleep of 3000
-			SetLog("Clan Chat Did Not Open - Abandon Donate")
-			AndroidPageError("DonateCC")
-			Return
-		EndIf
-		If _Sleep($DELAYDONATECC1) Then Return ; delay Allow 15x
-	WEnd
+;			ExitLoop
+;		EndIf
+;		;counter for time approx 3 sec max allowed for tab to open
+;		$icount += 1
+;		If $icount >= 15 Then ; allows for up to a sleep of 3000
+;			SetLog("Clan Chat Did Not Open - Abandon Donate")
+;			AndroidPageError("DonateCC")
+;			Return
+;		EndIf
+;		If _Sleep($DELAYDONATECC1) Then Return ; delay Allow 15x
+;	WEnd
 
 	Local $Scroll
 	Local $donateCCfilter = False
 	; add scroll here
-	While 1
-		ForceCaptureRegion()
-		;$Scroll = _PixelSearch(288, 640 + $g_iBottomOffsetY, 290, 655 + $g_iBottomOffsetY, Hex(0x588800, 6), 20)
-		$y = 90
-		$Scroll = _PixelSearch(293, 8 + $y, 295, 23 + $y, Hex(0xFFFFFF, 6), 20)
-		If IsArray($Scroll) And _ColorCheck(_GetPixelColor(300, 110, True), Hex(0x509808, 6), 20) = True Then ; a second pixel for the green
-			$bDonate = True
-			Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
-			$y = 90
-			If _Sleep($DELAYDONATECC2 + 100) Then ExitLoop
-			ContinueLoop
-		EndIf
-		ExitLoop
-	WEnd
+
+;	While 1
+;		ForceCaptureRegion()
+;		;$Scroll = _PixelSearch(288, 640 + $g_iBottomOffsetY, 290, 655 + $g_iBottomOffsetY, Hex(0x588800, 6), 20)
+;		$y = 90
+;		$Scroll = _PixelSearch(293, 8 + $y, 295, 23 + $y, Hex(0xFFFFFF, 6), 20)
+;		If IsArray($Scroll) And _ColorCheck(_GetPixelColor(300, 110, True), Hex(0x509808, 6), 20) = True Then ; a second pixel for the green
+;			$bDonate = True
+;			Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
+;			$y = 90
+;			If _Sleep($DELAYDONATECC2 + 100) Then ExitLoop
+;			ContinueLoop
+;		EndIf
+;		ExitLoop
+;	 WEnd
+
 	While $bDonate
 		checkAttackDisable($g_iTaBChkIdle) ; Early Take-A-Break detection
 		$ClanString = ""
@@ -159,7 +161,7 @@ Func DonateCC($Check = False)
 ;~ 			EndIf
 
 			;Read chat request for DonateTroop and DonateSpell
-			If ($bDonateTroop Or $bDonateSpell Or $bDonateAllTroop Or $bDonateAllSpell) And $donateCCfilter Then
+			If ($bDonateTroop Or $bDonateSpell) And $donateCCfilter Then
 				If $g_bChkExtraAlphabets Then
 					; Chat Request using "coc-latin-cyr" xml: Latin + Cyrillic derived alphabets / three paragraphs
 					Setlog("Using OCR to read Latin and Cyrillic derived alphabets..", $COLOR_ACTION)
@@ -176,6 +178,7 @@ Func DonateCC($Check = False)
 						$ClanString &= " " & getChatString(30, $g_aiDonatePixel[1] - 23, "coc-latin-cyr")
 					EndIf
 					If _Sleep($DELAYDONATECC2) Then ExitLoop
+					   #cs
 				Else ; default
 					; Chat Request using "coc-latinA" xml: only Latin derived alphabets / three paragraphs
 					Setlog("Using OCR to read Latin derived alphabets..", $COLOR_ACTION)
@@ -191,8 +194,10 @@ Func DonateCC($Check = False)
 					Else
 						$ClanString &= " " & getChatString(30, $g_aiDonatePixel[1] - 23, "coc-latinA")
 					EndIf
+					#ce
 					If _Sleep($DELAYDONATECC2) Then ExitLoop
 				EndIf
+
 				; Chat Request using IMGLOC: Chinese alphabet / one paragraph
 				If $g_bChkExtraChinese Then
 					Setlog("Using OCR to read the Chinese alphabet..", $COLOR_ACTION)
@@ -274,12 +279,14 @@ Func DonateCC($Check = False)
 			EndIf
 
 			; open Donate Window
-			If _Sleep(1000) Then Return
+	;		If _Sleep(1000) Then Return
 			If ($g_bSkipDonTroops = True And $g_bSkipDonSpells = True) Or DonateWindow($bOpen) = False Then
 				$bDonate = True
 				$y = $g_aiDonatePixel[1] + 50
-				SetLog("Donate Window did not open - Exiting Donate", $COLOR_RED)
-				ExitLoop ; Leave donate to prevent a bot hang condition
+				ClickP($aClanTab, 1, 0, "#0169") ; clicking clan tab
+				ContinueLoop
+		;		SetLog("Donate Window did not open - Exiting Donate", $COLOR_RED)
+		;		ExitLoop ; Leave donate to prevent a bot hang condition
 			EndIf
 
 			If $bDonateTroop Or $bDonateSpell Then
@@ -472,15 +479,15 @@ Func DonateCC($Check = False)
 
 		ForceCaptureRegion()
 		;$Scroll = _PixelSearch(288, 640 + $g_iBottomOffsetY, 290, 655 + $g_iBottomOffsetY, Hex(0x588800, 6), 20)
-		;$y = 90
-		;$Scroll = _PixelSearch(293, 8 + $y, 295, 23 + $y, Hex(0xFFFFFF, 6), 20)
-		$Scroll = _PixelSearch(293, 687 - 30, 295, 693 - 30, Hex(0xFFFFFF, 6), 20)
+		$y = 90
+		$Scroll = _PixelSearch(293, 8 + $y, 295, 23 + $y, Hex(0xFFFFFF, 6), 20)
+		;$Scroll = _PixelSearch(293, 687 - 30, 295, 693 - 30, Hex(0xFFFFFF, 6), 20)
 
 
 		If IsArray($Scroll) Then
 			$bDonate = True
 			Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
-			$y = 600
+			$y = 90
 
 			If _Sleep($DELAYDONATECC2) Then ExitLoop
 			ContinueLoop
@@ -544,6 +551,7 @@ Func CheckDonate(Const $sName, Const $sDonateString, Const $sBlacklistString, Co
 		EndIf
 	Next
 
+
 	If $g_bDonateAllRespectBlk = False Then
 		For $i = 1 To UBound($asSplitDonate) - 1
 			If CheckDonateString($asSplitDonate[$i], $sClanString) Then
@@ -554,6 +562,7 @@ Func CheckDonate(Const $sName, Const $sDonateString, Const $sBlacklistString, Co
 	EndIf
 
 	If $g_bDonateAllRespectBlk = True Then Return True
+
 
 	If $g_iDebugSetlog = 1 Then Setlog("Bad call of CheckDonateTroop: " & $sName, $COLOR_DEBUG)
 	Return False

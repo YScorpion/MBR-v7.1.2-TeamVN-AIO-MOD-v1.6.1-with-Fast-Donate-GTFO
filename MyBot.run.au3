@@ -779,7 +779,7 @@ Func Idle() ;Sequence that runs until Full Army
 		;If $g_bDonateSkipNearFullEnable = True Then getArmyCapacity(true,true)
 		If $g_iActiveDonate And $g_bChkDonate Then
 			Local $aHeroResult = CheckArmyCamp(True, True, True)
-			While $iReHere < 7
+			While $iReHere < 30
 				$iReHere += 1
 				If $iReHere = 1 And SkipDonateNearFullTroops(True, $aHeroResult) = False And BalanceDonRec(True) Then
 					DonateCC(True)
