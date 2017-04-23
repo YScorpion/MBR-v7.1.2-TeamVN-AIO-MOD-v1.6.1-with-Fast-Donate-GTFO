@@ -129,7 +129,11 @@ EndFunc   ;==>getArmyTroopKind
 
 Func getArmyCampCap($x_start, $y_start) ;  -> Gets army camp capacity --> train.au3, and used to read CC request time remaining
 	Return getOcrAndCapture("coc-ms", $x_start, $y_start, 82, 16, True)
-EndFunc   ;==>getArmyCampCap
+ EndFunc   ;==>getArmyCampCap
+
+ Func getArmyCampCapa($x_start, $y_start);  -> Gets army camp capacity --> train.au3, and used to read CC request time remaining
+	Return getOcrAndCapture("coc-army", $x_start, $y_start, 66, 14, True)
+EndFunc   ;==>getArmyCampCapa
 
 Func getCastleDonateCap($x_start, $y_start) ;  -> Gets clan castle capacity,  --> donatecc.au3
 	Return getOcrAndCapture("coc-army", $x_start, $y_start, 30, 14, True)

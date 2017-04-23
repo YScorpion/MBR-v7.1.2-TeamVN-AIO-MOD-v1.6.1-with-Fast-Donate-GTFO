@@ -708,7 +708,10 @@ Func runBot() ;Bot that runs everything in order
 					Else
 						checkSwitchAcc() ;  Switching to active account after donation
 					EndIf
-				EndIf																		; SwitchAcc Demen
+				 EndIf																		; SwitchAcc Demen
+			   GTFO()
+					 If _Sleep($DELAYRUNBOT3) Then Return
+					 If $g_bRestart = True Then ContinueLoop
 				Idle()
 				;$g_bFullArmy1 = $g_bFullArmy
 				If _Sleep($DELAYRUNBOT3) Then Return
@@ -779,7 +782,7 @@ Func Idle() ;Sequence that runs until Full Army
 		;If $g_bDonateSkipNearFullEnable = True Then getArmyCapacity(true,true)
 		If $g_iActiveDonate And $g_bChkDonate Then
 			Local $aHeroResult = CheckArmyCamp(True, True, True)
-			While $iReHere < 30
+			While $iReHere < 10
 				$iReHere += 1
 				If $iReHere = 1 And SkipDonateNearFullTroops(True, $aHeroResult) = False And BalanceDonRec(True) Then
 					DonateCC(True)
@@ -849,6 +852,7 @@ Func Idle() ;Sequence that runs until Full Army
 			If Not ($g_bFullArmy) Then
 				If $g_iActualTrainSkip < $g_iMaxTrainSkip Then
 					If CheckNeedOpenTrain($g_sTimeBeforeTrain) Then TrainRevamp()
+					   GTFO()
 					If $g_bRestart = True Then ExitLoop
 					If _Sleep($DELAYIDLE1) Then ExitLoop
 					checkMainScreen(False)

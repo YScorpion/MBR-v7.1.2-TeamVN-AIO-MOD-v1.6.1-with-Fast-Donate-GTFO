@@ -22,6 +22,10 @@ Global $g_iDonTroopsQuantityAv = 0, $g_iDonTroopsQuantity = 0, $g_iDonSpellsQuan
 Global $g_bSkipDonTroops = False, $g_bSkipDonSpells = False
 Global $g_bDonateAllRespectBlk = False ; is turned on off durning donate all section, must be false all other times
 Global $g_aiDonatePixel ; array holding x, y position of donate button in chat window
+Global $KickPosX
+Global $KickPosY
+;Global $cp
+;Global $len
 
 Func PrepareDonateCC()
 	$g_abPrepDon[0] = 0
@@ -1310,3 +1314,136 @@ Func SearchImgloc($directory = "", $x = 0, $y = 0, $x1 = 0, $y1 = 0)
 	$aResult[0] = "queued"
 	Return $aResult
 EndFunc   ;==>SearchImgloc
+
+
+Func GTFO()
+
+Global $g_hchkGTFO
+Global $cmbgtfo
+
+	  Click(1, 1, 1, 1000)
+	  Local  $Scroll,$len, $kick_y, $kicked = 0,$kicklimit, $mDonated, $mReceived, $Count = 1, $loopcount, $new, $p1, $p2,$lastNum, $lastNumCheck, $cp, $sNum
+	  $p1 = 533 ; 483 FOR MAXLVL CLAN CASTLE, 533 FOR NORMAL CLAN CASTLE,  577 FOR UNDER UPGRADE CLAN CASTLE
+	  $p2 = 660
+	  $len = 0
+
+	  $kicklimit=  GUICtrlRead($cmbgtfo)
+	  If GUICtrlRead($g_hchkGTFO) = 1 Then
+		 SetLog("Started Kicking", $COLOR_RED)
+	  Else
+		 Return
+	  EndIf
+
+
+	  While $kicked < $kicklimit
+		 Click(1, 1, 1, 1000)
+		 If GUICtrlRead($g_hchkGTFO) = 1 Then
+			If _Sleep(20) Then ExitLoop
+			Click($g_aiClanCastlePos[0], $g_aiClanCastlePos[1]) ; click clan castle
+			If _Sleep(500) Then ExitLoop
+
+			$new = _PixelSearch(460, 650, 590, 670, Hex(0xC8997B, 6),20)
+			If IsArray($new) Then
+			   $p1 = $new[0]
+			Else
+			   SetLog("Error: Unable to Start Kicking", $COLOR_RED)
+			   Return
+			EndIf
+
+			$loopcount = 0
+		   Click($p1, $p2)
+
+			While _ColorCheck( _GetPixelColor(60, 350, True), Hex(0x65B010, 6), 20) == False
+			   If _Sleep(100) Then ExitLoop
+			   $loopcount += 1
+			   If $loopcount >= 50 Then
+				   $loopcount = 0
+				    Click(1, 1, 1, 1000)
+				   SetLog("Unable to Load Clan Page.", $COLOR_RED)
+				   Return
+			   EndIf
+			WEnd
+			$KickPosX = -1
+			$Scroll = 0
+			$cp = 110
+			$len = 0
+			While 1
+			   If $g_iDebugSetlog = 1 Then SetLog("Capture. cp: " & $cp , $COLOR_ORANGE)
+			   _CaptureRegion(190, $cp, 220, 640)
+			   $new = _PixelSearch(200, $cp, 210, 670, Hex(0xE73838, 6),20)
+			   If IsArray($new) Then
+				  $KickPosX = $new[0]
+				  $KickPosY = $new[1]
+				  $mDonated = getArmyCampCapa($new[0]+281,$new[1]-10)
+				  $mReceived = getArmyCampCapa($new[0]+430,$new[1]-10)
+				  $sNum = getTrophyVillageSearch($new[0]-180,$new[1]-18)
+				  If $g_iDebugSetlog = 1 Then SetLog("Check For To Kick Members", $COLOR_RED)
+				  If $g_iDebugSetlog = 1 Then SetLog($sNum & " # x:" & $new[0] & " y:"  & $new[1], $COLOR_RED)
+
+				  If $mDonated >0 or $mReceived > 35 or $mReceived = 26  or $mReceived = 20 or $mReceived = 25 or $mReceived = 10 or $mReceived = 15 then
+;~ 				  If $mDonated >0 then
+					 Click($new[0], $new[1])
+					 If _Sleep(250) Then ExitLoop
+					 If $new[1] > 615 Then
+						$kick_y = 700
+					 Else
+						$kick_y = $new[1] + 70
+					 EndIf
+					 Click($new[0] + 300, $kick_y) ; kick
+					 If _Sleep(250) Then ExitLoop
+					 Click(520, 240)
+					 If _Sleep(250) Then ExitLoop
+					 $kicked += 1
+					 SetLog("Player #" & $sNum & "  Donated : " & $mDonated &  " - Received : " & $mReceived & " has been kicked out", $COLOR_RED)
+					 If _Sleep(250) Then ExitLoop
+					 ExitLoop
+				  Else
+					 $cp = $new[1]  + 20
+;~ 					 ExitLoop
+				  EndIf
+			   Else
+				  if $Scroll > 5 then
+					  If $g_iDebugSetlog = 1 Then SetLog("Kicking bottom members", $COLOR_RED)
+					  If $KickPosX > 0 Then
+						If $g_iDebugSetlog = 1 Then SetLog($sNum & " # x:" & $KickPosX & " y:"  & $KickPosY, $COLOR_RED)
+						Click($KickPosX, $KickPosY)
+						If _Sleep(250) Then ExitLoop
+						If $KickPosY  > 615 Then
+						   $kick_y = 700
+						Else
+						   $kick_y = $KickPosY + 70
+						EndIf
+						Click($KickPosX + 300, $kick_y) ; kick
+						If _Sleep(250) Then ExitLoop
+						Click(520, 240)
+						If _Sleep(250) Then ExitLoop
+						$kicked += 1
+						SetLog("Player #" & $sNum & "  Donated : " & $mDonated &  " - Received : " & $mReceived & " has been kicked out (Bottom)", $COLOR_RED)
+					 Else
+						If $g_iDebugSetlog = 1 Then SetLog("no members to kick", $COLOR_RED)
+					 EndIf
+					 ExitLoop 2
+				  Else
+					 MouseDrag(430,665,430,115,"left",500)
+					 Click(50,80)
+					 MouseDrag(430,175,430,174,"left",500)
+					 Click(50,80)
+					 $cp = 110
+					 If $g_iDebugSetlog = 1 Then SetLog("Page Scroll : " & $Scroll, $COLOR_RED)
+					 $Scroll = $Scroll + 1
+				  EndIf
+			   EndIf
+			WEnd
+
+
+
+		 Else
+			SetLog("Enable Kicking First", $COLOR_RED)
+			Return
+		 EndIf
+		 Click(1, 1, 1, 1000)
+	  WEnd
+
+	  SetLog("Finished Kicking", $COLOR_RED)
+	  Click(1, 1, 1, 2000)
+   EndFunc
