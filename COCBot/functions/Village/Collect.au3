@@ -79,6 +79,7 @@ Func Collect($Treasury = True)
 	checkMainScreen(False) ; check if errors during function
 	; Loot Cart Collect Function
 
+#cs
 	Setlog("Searching for a Loot Cart..", $COLOR_INFO)
 
 	Local $LootCart = @ScriptDir & "\imgxml\Resources\LootCart\loot_cart_0_85.xml"
@@ -135,6 +136,7 @@ Func Collect($Treasury = True)
 			EndIf
 		EndIf
 	EndIf
+	#ce
 	If $g_bChkTreasuryCollect And $Treasury Then TreasuryCollect()
 	EndGainCost("Collect")
 EndFunc   ;==>Collect
